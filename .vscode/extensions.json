@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "johnpapa.angular-essentials",
+        "bmewburn.vscode-intelephense-client",
+        "mehedidracula.php-namespace-resolver",
+        "thenouillet.symfony-vscode",
+        "mblode.twig-language-2"
+    ]
+}
