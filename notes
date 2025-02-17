@@ -1,0 +1,5 @@
+NOTES SAE :
+
+HttpClientModule est deprecated et est remplacé par le provider provideHttpClient() dans le app.module.ts
+
+pour le FormsModule l'import est le suivant : import { FormsModule } from '@angular/forms';
