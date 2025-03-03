@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Coach extends Utilisateur
 {
 
+    
+
     #[ORM\Column(type:"array")]
     private $specialites = [];
 
@@ -42,7 +44,7 @@ class Coach extends Utilisateur
 
     public function getSpecialites(): ?string
     {
-        return $this->specialites;
+        return $this->specialites; 
     }
 
     public function setSpecialites(?string $specialites): static
