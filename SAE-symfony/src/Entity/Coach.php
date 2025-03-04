@@ -14,7 +14,7 @@ class Coach extends Utilisateur
     
 
     #[ORM\Column(type:"array")]
-    private $specialites = [];
+    private ?array $specialites = [];
 
     #[ORM\Column]
     private ?float $tarif_horaire = null;
@@ -42,15 +42,28 @@ class Coach extends Utilisateur
         return $this->id;
     }
 
-    public function getSpecialites(): ?string
+    public function getSpecialites(): array
     {
         return $this->specialites; 
     }
-
-    public function setSpecialites(?string $specialites): static
+    
+    public function setSpecialites(array $specialites): static
     {
         $this->specialites = $specialites;
+        return $this;
+    }
 
+    public function addSpecialite(string $specialite): static
+    {
+        if (!in_array($specialite, $this->specialites, true)) {
+            $this->specialites[] = $specialite;
+        }
+        return $this;
+    }
+
+    public function removeSpecialite(string $specialite): static
+    {
+        $this->specialites = array_filter($this->specialites, fn ($item) => $item !== $specialite);
         return $this;
     }
 
