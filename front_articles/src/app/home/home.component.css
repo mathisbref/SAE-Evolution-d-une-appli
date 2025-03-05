@@ -2,15 +2,25 @@
     background-image: url('../../assets/images/salle_bg.jpg');
     background-size: cover;
     background-position: center;
-    height: 70vh;
+    height: 65vh;
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     color: white;
     text-align: left;
     /* Alignement du texte à gauche */
     padding: 20px;
+    position: relative;
+    /* Pour positionner le search-container de manière absolue */
+}
+
+.background-gray {
+    background-color: #f8f9fa;
+    /* Fond gris */
+    padding: 50px 0;
+    /* Espacement autour du contenu */
 }
 
 .custom-text-outline {
@@ -29,22 +39,12 @@
     /* Taille de la police plus grande */
 }
 
-.custom-text-p {
+.custom-text-p,
+.custom-text-small {
     font-weight: bold;
     /* Texte en gras */
-    font-size: 1rem;
-    /* Taille de la police plus petite */
-    color: white;
-    /* Couleur du texte blanc */
-    padding: 5px;
-    /* Espacement intérieur */
-    display: inline-block;
-    /* Pour que le fond noir s'ajuste au texte */
-}
-
-.custom-text-small {
-    font-size: 1rem;
-    /* Taille de la police plus petite */
+    background-color: black;
+    /* Fond noir */
     color: white;
     /* Couleur du texte blanc */
     padding: 5px;
@@ -67,4 +67,51 @@ small {
 
 button {
     margin: 10px;
+}
+
+.search-container {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Contours ombragés */
+    padding: 20px;
+    width: 50%;
+    margin: 0 auto;
+    /* Centrer horizontalement */
+    z-index: 1;
+    /* Assurer que le search-container soit au-dessus */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+}
+
+.search-text {
+    margin-right: 10px;
+    font-weight: bold;
+    color: black;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-group .form-control {
+    flex: 1;
+}
+
+.input-group .search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    /* Largeur du bouton */
+    height: 48px;
+    /* Hauteur du bouton */
+    padding: 0;
 }

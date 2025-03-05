@@ -23,3 +23,15 @@ Ajout du dossier asset dans le angular.json pour que les images puissent s'affic
             ],
 
 --------------------------------------------------------------------------
+
+05/03
+
+Modification du angular.json pour ajouter les icones fontawesome :
+
+"styles": [
+              "node_modules/bootswatch/dist/lux/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "src/styles.css"
+            ],
+
+De plus installation du package: npm install @fortawesome/fontawesome-free
