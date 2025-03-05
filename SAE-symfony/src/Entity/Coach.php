@@ -39,7 +39,7 @@ class Coach extends Utilisateur
 
     public function getId(): ?int
     {
-        return $this->id;
+        return parent::getId();
     }
 
     public function getSpecialites(): array
