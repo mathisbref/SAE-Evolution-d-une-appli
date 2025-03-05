@@ -115,3 +115,16 @@ button {
     /* Hauteur du bouton */
     padding: 0;
 }
+
+.coach-photo {
+    width: 100%;
+    height: 300px;
+    /* Hauteur des photos en format portrait */
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.coach-name {
+    font-weight: bold;
+    color: black;
+}
