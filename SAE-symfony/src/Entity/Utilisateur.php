@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name: "discr", type: "string")]
 #[ORM\DiscriminatorMap(["utilisateur" => Utilisateur::class, "coach" => Coach::class, "sportif" => Sportif::class])]
+#[ApiResource()]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
