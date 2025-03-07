@@ -15,14 +15,19 @@ class SportifCrudController extends AbstractCrudController
         return Sportif::class;
     }
 
-    /*
-    public function configureFields(string $pageName): iterable
-    {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
-    }
-    */
+    
+    // public function configureFields(string $pageName): iterable
+    // {
+    //     return [
+    //         IdField::new('id')->hideOnForm(),
+    //         TextField::new('nom'),
+    //         TextField::new('prenom'),
+    //         TextField::new('email'),
+    //         TextField::new('password'),
+    //         TextField::new('niveau_sportif'),
+    //         TextEditorField::new('date_inscription'),
+    //         TextEditorField::new('description'),
+    //     ];
+    // }
+    
 }

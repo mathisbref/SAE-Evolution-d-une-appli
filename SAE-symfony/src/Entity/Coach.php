@@ -44,6 +44,21 @@ class Coach extends Utilisateur
         return parent::getId();
     }
 
+    public function getNom(): ?String
+    {
+        return parent::getNom();
+    }
+
+    public function getPrenom(): ?String
+    {
+        return parent::getPrenom();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getNom() . ' ' . $this->getPrenom();
+    }
+
     public function getSpecialites(): array
     {
         return $this->specialites; 
@@ -68,7 +83,7 @@ class Coach extends Utilisateur
         $this->specialites = array_filter($this->specialites, fn ($item) => $item !== $specialite);
         return $this;
     }
-
+    
     public function getTarifHoraire(): ?float
     {
         return $this->tarif_horaire;
