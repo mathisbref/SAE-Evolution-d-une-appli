@@ -5,7 +5,8 @@ import { SeanceListComponent } from './seance-list/seance-list.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'seances', component: SeanceListComponent }
+  { path: 'seances', component: SeanceListComponent },
+  { path: '/login', component: HomeComponent },
 ];
 
 @NgModule({
