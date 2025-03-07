@@ -11,6 +11,8 @@ import { MenuComponent } from './menu/menu.component';
 import { SeanceListComponent } from './seance-list/seance-list.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { SeanceDetailComponent } from './seance-detail/seance-detail.component';
+import { CoachDetailComponent } from './coach-detail/coach-detail.component';
+import { CoachListComponent } from './coach-list/coach-list.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { SeanceDetailComponent } from './seance-detail/seance-detail.component';
     MenuComponent,
     SeanceListComponent,
     SearchBarComponent,
-    SeanceDetailComponent
+    SeanceDetailComponent,
+    CoachDetailComponent,
+    CoachListComponent
   ],
   imports: [
     BrowserModule,

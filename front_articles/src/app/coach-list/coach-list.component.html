@@ -1,0 +1,8 @@
+<div class="container mt-5">
+    <div class="row">
+        <div *ngFor="let coach of coachs" class="col-md-4 text-center coach-card" (click)="viewDetails(coach.id)">
+            <img [src]="coach.image" class="img-fluid coach-photo">
+            <p class="coach-name">{{ coach.prenom }} {{ coach.nom }}</p>
+        </div>
+    </div>
+</div>
