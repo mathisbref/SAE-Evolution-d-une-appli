@@ -9,13 +9,15 @@ import { FormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { MenuComponent } from './menu/menu.component';
 import { SeanceListComponent } from './seance-list/seance-list.component';
+import { SearchBarComponent } from './search-bar/search-bar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     MenuComponent,
-    SeanceListComponent
+    SeanceListComponent,
+    SearchBarComponent
   ],
   imports: [
     BrowserModule,

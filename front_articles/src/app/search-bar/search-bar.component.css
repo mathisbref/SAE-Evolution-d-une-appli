@@ -1,0 +1,45 @@
+.search-container {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Contours ombragés */
+    padding: 20px;
+    margin: 0 auto;
+    /* Centrer horizontalement */
+    z-index: 1;
+    /* Assurer que le search-container soit au-dessus */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+}
+
+.search-text {
+    margin-right: 10px;
+    font-weight: bold;
+    color: black;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-group .form-control {
+    flex: 1;
+}
+
+.input-group .search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    /* Largeur du bouton */
+    height: 48px;
+    /* Hauteur du bouton */
+    padding: 0;
+}

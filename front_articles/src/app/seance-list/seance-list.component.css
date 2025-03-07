@@ -1,0 +1,16 @@
+.container {
+    margin-top: 20px;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.row {
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin-top: 0;
+}
