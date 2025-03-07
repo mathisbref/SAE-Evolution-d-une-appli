@@ -4,4 +4,11 @@
     <p>Nombre de personnes: {{ seance.type_seance }}</p>
     <p>Niveau: {{ seance.niveau_seance }}</p>
     <p>Statut: {{ seance.statut }}</p>
+
+    <h2>Exercices</h2>
+    <ul>
+        <li *ngFor="let exercice of exercices">
+            {{ exercice.nom }} - {{ exercice.description }}
+        </li>
+    </ul>
 </div>
