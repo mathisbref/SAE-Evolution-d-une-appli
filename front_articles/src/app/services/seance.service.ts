@@ -13,7 +13,11 @@ export class SeanceService {
 
   getSeances(): Observable<any[]> {
     return this.http.get<any>(this.apiUrl).pipe(
-      map(response => response.member) // Extraire le tableau des séances
+      map(response => response.member)
     );
+  }
+
+  getSeanceById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }

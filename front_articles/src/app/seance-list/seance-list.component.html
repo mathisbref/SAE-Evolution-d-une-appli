@@ -16,6 +16,9 @@
             <p>Nombre de personnes: {{ seance.type_seance }}</p>
             <p>Niveau: {{ seance.niveau_seance }}</p>
             <p>Statut: {{ seance.statut }}</p>
+            <button class="btn btn-link" (click)="viewDetails(seance.id)">
+                <i class="fas fa-arrow-right"></i> <!-- Icône de flèche -->
+            </button>
         </div>
     </div>
 </div>
