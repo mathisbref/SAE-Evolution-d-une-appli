@@ -49,7 +49,10 @@ class AdminAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
         // return new RedirectResponse($this->urlGenerator->generate('some_route'));
         if (in_array('ROLE_ADMIN', $token->getUser()->getRoles())) {
             return new RedirectResponse("/admin");
-        } else {
+        }elseif (in_array('ROLE_USER', $token->getUser()->getRoles())) {
+            return new RedirectResponse("/admin");
+        }
+         else {
             return new RedirectResponse("/");
         }
     }

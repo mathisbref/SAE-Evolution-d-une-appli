@@ -43,10 +43,7 @@ class SeanceCrudController extends AbstractCrudController
                     'Validée' => 'validée',
                     'Annulée' => 'annulée',
                 ]),
-            AssociationField::new('coach')
-                ->setFormTypeOptions([
-                    'by_reference' => false,
-                ]),
+                AssociationField::new('coach')
         ];
     }
     
