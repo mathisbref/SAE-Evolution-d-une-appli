@@ -1,11 +1,11 @@
-/* login.component.scss */
+/* register.component.scss */
 :host {
     display: block;
     height: 100%;
     background-color: #f8f9fa;
   }
   
-  .login-container {
+  .register-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,39 +16,38 @@
     background-position: center;
   }
   
-  .login-card {
+  .register-card {
     width: 100%;
-    max-width: 450px;
+    max-width: 600px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
   }
   
-  .login-header {
+  .register-header {
     padding: 30px;
     text-align: center;
-    background-color: black; /* Style du home */
+    background-color: black;
     color: white;
   }
   
-  .login-header h1 {
+  .register-header h1 {
     margin: 0;
-    font-size: 32px;
     font-weight: 700;
     letter-spacing: 1px;
     color: black;
     font-size: 3rem;
   }
   
-  .login-header h2 {
+  .register-header h2 {
     color: transparent;
     -webkit-text-stroke: 1px white;
     font-size: 2rem;
     margin: 0;
   }
   
-  .login-header p {
+  .register-header p {
     margin-top: 10px;
     font-size: 16px;
     opacity: 0.9;
@@ -59,8 +58,18 @@
     display: inline-block;
   }
   
-  .login-form {
+  .register-form {
     padding: 30px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
   }
   
   .form-group {
@@ -74,9 +83,10 @@
     color: #333;
   }
   
+  input[type="text"],
   input[type="email"],
   input[type="password"],
-  input[type="text"] {
+  select {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #ddd;
@@ -85,9 +95,10 @@
     transition: border-color 0.3s;
   }
   
-  input:focus {
+  input:focus,
+  select:focus {
     outline: none;
-    border-color: #ff6200;
+    border-color: #0d6efd;
   }
   
   .is-invalid {
@@ -115,29 +126,32 @@
     color: #777;
   }
   
-  .form-options {
+  .terms-group {
+    margin-bottom: 30px;
+  }
+  
+  .checkbox-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    align-items: flex-start;
   }
   
-  .remember-me {
-    display: flex;
-    align-items: center;
+  .checkbox-wrapper input[type="checkbox"] {
+    margin-right: 10px;
+    margin-top: 3px;
   }
   
-  .remember-me input {
-    margin-right: 8px;
-  }
-  
-  .forgot-password {
-    color: #ff6200;
-    text-decoration: none;
+  .checkbox-wrapper label {
+    font-weight: normal;
     font-size: 14px;
+    line-height: 1.4;
   }
   
-  .forgot-password:hover {
+  .checkbox-wrapper a {
+    color: #0d6efd;
+    text-decoration: none;
+  }
+  
+  .checkbox-wrapper a:hover {
     text-decoration: underline;
   }
   
@@ -145,11 +159,11 @@
     text-align: center;
   }
   
-  .btn-login {
+  .btn-register-submit {
     display: block;
     width: 100%;
     padding: 14px;
-    background-color: #0d6efd; /* Couleur btn-primary de Bootstrap */
+    background-color: #0d6efd;
     color: white;
     border: none;
     border-radius: 5px;
@@ -160,11 +174,11 @@
     text-transform: uppercase;
   }
   
-  .btn-login:hover {
+  .btn-register-submit:hover {
     background-color: #0b5ed7;
   }
   
-  .btn-login:disabled {
+  .btn-register-submit:disabled {
     background-color: #6c757d;
     cursor: not-allowed;
   }
@@ -192,23 +206,23 @@
     text-align: center;
   }
   
-  .login-footer {
+  .register-footer {
     padding: 20px 30px;
     text-align: center;
     background-color: #f9f9f9;
     border-top: 1px solid #eee;
   }
   
-  .login-footer p {
+  .register-footer p {
     margin-bottom: 10px;
     color: #666;
   }
   
-  .btn-register {
+  .btn-login-link {
     display: inline-block;
     padding: 10px 20px;
     background-color: transparent;
-    color: #6c757d; /* Couleur btn-secondary de Bootstrap */
+    color: #6c757d;
     border: 2px solid #6c757d;
     border-radius: 5px;
     font-weight: 600;
@@ -216,23 +230,15 @@
     transition: all 0.3s;
   }
   
-  .btn-register:hover {
+  .btn-login-link:hover {
     background-color: #6c757d;
     color: white;
   }
   
   /* Responsive adjustments */
-  @media (max-width: 576px) {
-    .login-card {
-      box-shadow: none;
-    }
-    
-    .form-options {
+  @media (max-width: 768px) {
+    .form-row {
       flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .forgot-password {
-      margin-top: 10px;
+      gap: 0;
     }
   }

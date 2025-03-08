@@ -1,1 +1,71 @@
-<p>login works!</p>
+<div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h2 class="custom-text-outline">FITNESS</h2>
+        <h1 class="custom-text-filled">COACH</h1>
+        <p>Accédez à votre espace personnel</p>
+      </div>
+      
+      <div class="login-form">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              placeholder="votre@email.com"
+              [ngClass]="{'is-invalid': submitted && f['email'].errors}"
+            />
+            <div *ngIf="submitted && f['email'].errors" class="error-message">
+              <div *ngIf="f['email'].errors?.['required']">L'email est obligatoire</div>
+              <div *ngIf="f['email'].errors?.['email']">Veuillez entrer un email valide</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="password-input">
+              <input 
+                [type]="hidePassword ? 'password' : 'text'" 
+                id="password" 
+                formControlName="password"
+                placeholder="Votre mot de passe"
+                [ngClass]="{'is-invalid': submitted && f['password'].errors}"
+              />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                <i class="fa" [ngClass]="hidePassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+              </button>
+            </div>
+            <div *ngIf="submitted && f['password'].errors" class="error-message">
+              <div *ngIf="f['password'].errors?.['required']">Le mot de passe est obligatoire</div>
+            </div>
+          </div>
+          
+          <div class="form-options">
+            <div class="remember-me">
+              <input type="checkbox" id="remember" formControlName="rememberMe">
+              <label for="remember">Se souvenir de moi</label>
+            </div>
+            <a routerLink="/forgot-password" class="forgot-password">Mot de passe oublié?</a>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn-login" [disabled]="loading">
+              <span *ngIf="!loading">CONNEXION</span>
+              <span *ngIf="loading" class="spinner"></span>
+            </button>
+          </div>
+          
+          <div *ngIf="error" class="error-alert">
+            {{ error }}
+          </div>
+        </form>
+      </div>
+      
+      <div class="login-footer">
+        <p>Vous n'avez pas de compte?</p>
+        <a routerLink="/register" class="btn-register">S'inscrire</a>
+      </div>
+    </div>
+  </div>
