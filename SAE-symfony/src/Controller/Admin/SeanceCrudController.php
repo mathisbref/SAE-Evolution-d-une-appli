@@ -43,7 +43,14 @@ class SeanceCrudController extends AbstractCrudController
                     'Validée' => 'validée',
                     'Annulée' => 'annulée',
                 ]),
-                AssociationField::new('coach')
+                AssociationField::new('coach'),
+                AssociationField::new('exercices')
+            ->setFormTypeOptions([
+                'by_reference' => false, // Important pour ManyToMany
+                'multiple' => true,
+            ])
+            ->setRequired(false)
+                
         ];
     }
     
