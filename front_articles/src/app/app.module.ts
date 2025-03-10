@@ -17,6 +17,8 @@ import { LoginComponent } from './login/login.component'; // N'oubliez pas d'ajo
 
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { RegisterComponent } from './register/register.component';
+import { PlanningComponent } from './planning/planning.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   declarations: [
@@ -29,14 +31,16 @@ import { RegisterComponent } from './register/register.component';
     CoachDetailComponent,
     CoachListComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    PlanningComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FullCalendarModule
   ],
   providers: [
     provideClientHydration(),

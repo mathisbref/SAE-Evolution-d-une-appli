@@ -35,3 +35,10 @@ Modification du angular.json pour ajouter les icones fontawesome :
             ],
 
 De plus installation du package: npm install @fortawesome/fontawesome-free
+
+
+--------------------------------------------------------------------------
+
+Installation de fullcalendar pour avoir un planning de séances
+
+npm install @fullcalendar/angular @fullcalendar/core @fullcalendar/daygrid @fullcalendar/interaction

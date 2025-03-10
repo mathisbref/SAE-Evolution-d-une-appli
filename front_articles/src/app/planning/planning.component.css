@@ -1,0 +1,30 @@
+.fc-event {
+    font-size: 1.2em;
+    /* Augmente la taille du texte */
+    padding: 5px;
+    /* Ajoute du padding autour du texte */
+    border: 2px solid #007bff;
+    /* Ajoute une bordure */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Ajoute une ombre */
+}
+
+.fc-event-title {
+    font-weight: bold;
+    /* Rend le texte en gras */
+}
+
+.fc-event,
+.fc-event:hover {
+    color: white;
+    /* Couleur du texte */
+    background-color: #007bff;
+    /* Couleur de fond */
+    border-color: #007bff;
+    /* Couleur de bordure */
+}
+
+.fc-event:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Ajoute une ombre au survol */
+}
