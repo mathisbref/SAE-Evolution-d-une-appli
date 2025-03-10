@@ -158,16 +158,15 @@ class Coach extends Utilisateur
     }
 
     public function getFichesDePaieList(): string
-{
-    return implode(', ', $this->ficheDePaies->map(fn($fiche) => 
-        sprintf(
-            '<a href="/admin?crudAction=detail&crudControllerFqcn=%s&entityId=%d">Fiche #%d</a>',
-            urlencode('App\Controller\Admin\FicheDePaieCrudController'),
-            $fiche->getId(),
-            $fiche->getId()
-        )
-    )->toArray());
-}
-
+    {
+        return implode(', ', $this->ficheDePaies->map(fn($fiche) => 
+            sprintf(
+                '<a href="/admin?crudAction=detail&crudControllerFqcn=%s&entityId=%d">Fiche #%d</a>',
+                urlencode('App\Controller\Admin\FicheDePaieCrudController'),
+                $fiche->getId(),
+                $fiche->getId()
+            )
+        )->toArray());
+    }
 
 }
