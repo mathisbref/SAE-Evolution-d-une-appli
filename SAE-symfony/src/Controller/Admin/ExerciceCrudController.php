@@ -20,7 +20,7 @@ class ExerciceCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id'),
-            TextField::new('title'),
+            TextField::new('nom'),
             TextEditorField::new('description'),
         ];
     }

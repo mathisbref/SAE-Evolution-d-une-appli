@@ -83,6 +83,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getNomComplet(): string
+    {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
     /**
      * A visual identifier that represents this user.
      *

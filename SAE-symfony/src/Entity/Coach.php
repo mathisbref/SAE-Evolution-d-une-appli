@@ -140,4 +140,10 @@ class Coach extends Utilisateur
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->getNomComplet(); // Retourne "Prénom Nom"
+    }
+
 }
