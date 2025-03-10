@@ -1,14 +1,33 @@
-<div *ngIf="seance">
-    <h1>{{ seance.theme_seance }}</h1>
-    <p>Date: {{ seance.date_heure }}</p>
-    <p>Nombre de personnes: {{ seance.type_seance }}</p>
-    <p>Niveau: {{ seance.niveau_seance }}</p>
-    <p>Statut: {{ seance.statut }}</p>
-
+<div *ngIf="seance" class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <img src="/assets/images/seance.jpg" alt="Séance Image" class="img-fluid">
+        </div>
+        <div class="col-md-6">
+            <h1>Détails de la Séance</h1>
+            <p><strong>ID:</strong> {{ seance.id }}</p>
+            <p><strong>Date et Heure:</strong> {{ seance.date_heure }}</p>
+            <p><strong>Type de Séance:</strong> {{ seance.type_seance }}</p>
+            <p><strong>Thème de la Séance:</strong> {{ seance.theme_seance }}</p>
+            <p><strong>Statut:</strong> {{ seance.statut }}</p>
+            <p><strong>Niveau de la Séance:</strong> {{ seance.niveau_seance }}</p>
+            <br>
+            <button class="btn btn-primary">Réserver la Séance</button>
+        </div>
+    </div>
+    <hr class="my-4">
     <h2>Exercices</h2>
-    <ul>
-        <li *ngFor="let exercice of exercices">
-            {{ exercice.nom }} - {{ exercice.description }}
-        </li>
-    </ul>
+    <div class="row">
+        <div *ngFor="let exercice of exercices" class="col-md-4">
+            <div class="card mb-4">
+                <img src="/assets/images/exercice.jpg" alt="Exercice Image" class="card-img-top img-fluid">
+                <div class="card-body">
+                    <h5 class="card-title">{{ exercice.nom }}</h5>
+                    <p class="card-text">{{ exercice.description }}</p>
+                    <p><strong>Durée Estimée:</strong> {{ exercice.duree_estimee }} minutes</p>
+                    <p><strong>Difficulté:</strong> {{ exercice.difficulte }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
