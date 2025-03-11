@@ -20,12 +20,12 @@ class Seance
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_heure = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Choice(
-        choices: ["solo","duo","trio"],
+        choices: ["solo", "duo", "trio"],
         message: "Le type '{{ value }}' n'est pas valide. Choisissez parmi 'solo', 'duo' ou 'trio'."
     )]
     private ?string $type_seance = null;
@@ -35,14 +35,14 @@ class Seance
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Choice(
-        choices: ["débutant","intermédiaire","avancé"],
+        choices: ["débutant", "intermédiaire", "avancé"],
         message: "Le niveau '{{ value }}' n'est pas valide. Choisissez parmi 'débutant', 'intermédiaire' ou 'avancé'."
     )]
     private ?string $niveau_seance = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Choice(
-        choices: ["prévue","validée","annulée"],
+        choices: ["prévue", "validée", "annulée"],
         message: "Le statut '{{ value }}' n'est pas valide. Choisissez parmi 'prévue', 'validée' ou 'annulée'."
     )]
     private ?string $statut = null;

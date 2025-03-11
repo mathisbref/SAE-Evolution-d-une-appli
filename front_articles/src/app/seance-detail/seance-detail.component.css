@@ -37,3 +37,9 @@ hr.my-4 {
     border-top: 1px solid #ddd;
     margin: 1.5rem 0;
 }
+
+.btn-secondary {
+    background-color: #d3d3d3;
+    border-color: #d3d3d3;
+    cursor: not-allowed;
+}
