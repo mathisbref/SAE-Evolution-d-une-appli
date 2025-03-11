@@ -41,4 +41,4 @@ De plus installation du package: npm install @fortawesome/fontawesome-free
 
 Installation de fullcalendar pour avoir un planning de séances
 
-npm install @fullcalendar/angular @fullcalendar/core @fullcalendar/daygrid @fullcalendar/interaction
+npm install @fullcalendar/angular @fullcalendar/core @fullcalendar/daygrid @fullcalendar/interaction @fullcalendar/timegrid

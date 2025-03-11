@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
             $manager->persist($utilisateur);
             $utilisateurs[] = $utilisateur;
         }
-        */
+         */
 
         $coachs = [];
         for ($i = 0; $i < 5; $i++) {
@@ -84,9 +84,9 @@ class AppFixtures extends Fixture
             $exercices[] = $exercice;
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $seance = new Seance();
-            $seance->setDateHeure($faker->dateTimeBetween('now', '+1 year'));
+            $seance->setDateHeure($faker->dateTimeBetween('now', '+1 month'));
             $seance->setTypeSeance($faker->randomElement(['solo', 'duo', 'trio']));
             $seance->setThemeSeance($faker->word);
             $seance->setNiveauSeance($faker->randomElement(['débutant', 'intermédiaire', 'avancé']));

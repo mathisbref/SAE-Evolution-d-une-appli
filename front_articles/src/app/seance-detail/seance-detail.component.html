@@ -11,8 +11,8 @@
             <p><strong>Thème de la Séance:</strong> {{ seance.theme_seance }}</p>
             <p><strong>Statut:</strong> {{ seance.statut }}</p>
             <p><strong>Niveau de la Séance:</strong> {{ seance.niveau_seance }}</p>
-            <br>
-            <button class="btn btn-primary">Réserver la Séance</button>
+            <button class="btn btn-primary" [disabled]="seance.statut === 'annulée'"
+                [ngClass]="{'btn-secondary': seance.statut === 'annulée'}">Réserver la Séance</button>
         </div>
     </div>
     <hr class="my-4">
