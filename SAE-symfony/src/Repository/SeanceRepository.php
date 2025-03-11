@@ -16,7 +16,7 @@ class SeanceRepository extends ServiceEntityRepository
         parent::__construct($registry, Seance::class);
     }
 
-    public function getTop3Seances(): array
+    public function getBestThemeSeance(): array
     {
         $conn = $this->getEntityManager()->getConnection();
 

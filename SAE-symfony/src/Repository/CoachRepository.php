@@ -16,6 +16,29 @@ class CoachRepository extends ServiceEntityRepository
         parent::__construct($registry, Coach::class);
     }
 
+    public function getCoachLePlusProductif(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "
+            SELECT c.*, u.*
+            FROM Coach c, Seance s, Utilisateur u
+            WHERE c.id = s.coach_id AND u.id = c.id
+            GROUP BY c.id
+            HAVING COUNT(s.coach_id) = (
+                SELECT MAX(nb_seances)
+                FROM (
+                    SELECT COUNT(coach_id) AS nb_seances
+                    FROM Seance
+                    GROUP BY coach_id
+                ) AS idcoach_max_seances
+            );
+        ";
+
+        $stmt = $conn->executeQuery($sql);
+        return $stmt->fetchAllAssociative();
+    }
+
     //    /**
     //     * @return Coach[] Returns an array of Coach objects
     //     */

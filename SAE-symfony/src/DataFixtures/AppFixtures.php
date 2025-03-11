@@ -87,7 +87,21 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 200; $i++) {
             $seance = new Seance();
             $seance->setDateHeure($faker->dateTimeBetween('now', '+1 month'));
-            $seance->setTypeSeance($faker->randomElement(['solo', 'duo', 'trio']));
+
+            $nombreSportifs = $faker->numberBetween(0, 3);
+            if ($nombreSportifs === 0) {
+                $typeSeance = $faker->randomElement(['solo', 'duo', 'trio']);
+            } elseif ($nombreSportifs === 1) {
+                $typeSeance = 'solo';
+            } elseif ($nombreSportifs === 2) {
+                $typeSeance = 'duo';
+            } elseif ($nombreSportifs === 3) {
+                $typeSeance = 'trio';
+            } else {
+                $typeSeance = 'trio';
+            }
+
+            $seance->setTypeSeance($typeSeance);
             $seance->setThemeSeance($faker->word);
             $seance->setNiveauSeance($faker->randomElement(['débutant', 'intermédiaire', 'avancé']));
             $seance->setStatut($faker->randomElement(['prévue', 'validée', 'annulée']));
@@ -95,7 +109,6 @@ class AppFixtures extends Fixture
             $coach = $coachs[$faker->numberBetween(0, 4)];
             $seance->setCoach($coach);
 
-            $nombreSportifs = $faker->numberBetween(1, 3);
             for ($j = 0; $j < $nombreSportifs; $j++) {
                 $sportif = $sportifs[$faker->numberBetween(0, 9)];
                 $seance->addSportif($sportif);

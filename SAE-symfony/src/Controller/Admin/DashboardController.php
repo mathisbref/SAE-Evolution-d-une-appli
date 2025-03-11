@@ -10,6 +10,7 @@ use App\Entity\Sportif;
 use App\Entity\Utilisateur;
 use App\Repository\SeanceRepository;
 use App\Repository\SportifRepository;
+use App\Repository\CoachRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -22,11 +23,13 @@ class DashboardController extends AbstractDashboardController
 {
     private $seanceRepository;
     private $sportifRepository;
+    private $coachRepository;
 
-    public function __construct(SeanceRepository $seanceRepository, SportifRepository $sportifRepository)
+    public function __construct(SeanceRepository $seanceRepository, SportifRepository $sportifRepository, CoachRepository $coachRepository)
     {
         $this->seanceRepository = $seanceRepository;
         $this->sportifRepository = $sportifRepository;
+        $this->coachRepository = $coachRepository;
     }
 
     #[Route('/admin', name: 'admin')]
@@ -35,10 +38,11 @@ class DashboardController extends AbstractDashboardController
         // Récupérer toutes les séances
         $seances = $this->seanceRepository->findAll();
 
-        // Calculer le taux d'occupation pour chaque séance
-        //$tauxSeances = [];
-        $tauxTot = 0;
+        // Tableau pour stocker les taux d'occupation de chaque séance
+        $tauxSeances = [];
+
         foreach ($seances as $seance) {
+            // Déterminer la capacité maximale en fonction du type de séance
             $capaciteMax = match ($seance->getTypeSeance()) {
                 'solo' => 1,
                 'duo' => 2,
@@ -46,14 +50,23 @@ class DashboardController extends AbstractDashboardController
                 default => 0,
             };
 
+            // Récupérer le nombre d'inscrits pour la séance
             $nombreInscrits = $seance->getSportifs()->count();
+
+            // Calculer le taux d'occupation pour cette séance
             $taux = ($capaciteMax > 0) ? ($nombreInscrits / $capaciteMax) * 100 : 0;
-            //$tauxSeances[$seance->getId()] = round($taux, 2);
-            $tauxTot = $tauxTot + round($taux, 2);
+
+            // Stocker le taux d'occupation dans le tableau
+            $tauxSeances[] = $taux;
         }
 
-        $tauxOccupation = $tauxTot / count($seances);
+        // Calculer la moyenne des taux d'occupation
+        $tauxOccupationMoyen = (count($tauxSeances) > 0) ? array_sum($tauxSeances) / count($tauxSeances) : 0;
 
+        // Arrondir le taux d'occupation moyen à 2 décimales
+        $tauxOccupation = round($tauxOccupationMoyen, 2);
+
+        
         // Récupérer tous les sportifs
         $sportifs = $this->sportifRepository->findAll();
 
@@ -72,15 +85,18 @@ class DashboardController extends AbstractDashboardController
         }
 
         $tauxAbsenteisme = $tauxTot / count($sportifs);
+        $coachLePlusProductif = $this->coachRepository->getCoachLePlusProductif();
 
         // Classer les séances par popularité (nombre de sportifs inscrits)
-        $seancesPopulaires = $this->seanceRepository->getTop3Seances();
+        //$seancesPopulaires = $this->seanceRepository->getTop3Seances();
 
         // Passer les données à la vue
         return $this->render('admin/dashboard.html.twig', [
             'tauxOccupation' => $tauxOccupation,
+            // 'tauxSeances' => $tauxSeances,
             'tauxAbsenteisme' => $tauxAbsenteisme,
-            'seancesPopulaires' => $seancesPopulaires,
+            'coachProductifs' => $coachLePlusProductif,
+            // 'seancesPopulaires' => $seancesPopulaires,
         ]);
     }
 
