@@ -57,7 +57,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-folder', Utilisateur::class);
         yield MenuItem::linkToCrud ('Coachs', 'fa fa-folder', Coach::class);
         yield MenuItem::linkToCrud ('Sportifs', 'fa fa-folder', Sportif::class);
-        yield MenuItem::linkToCrud('FicheDePaie', 'fa fa-folder', FicheDePaie::class);
+        
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            yield MenuItem::linkToCrud('FicheDePaie', 'fa fa-folder', FicheDePaie::class);
+        }        
         yield MenuItem::linkToCrud ('Seance', 'fa fa-folder', Seance::class);
         yield MenuItem::linkToCrud ('Exercice', 'fa fa-folder', Exercice::class);
     }

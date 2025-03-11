@@ -3,12 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Coach;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
@@ -40,6 +43,14 @@ class CoachCrudController extends AbstractCrudController
         ];
     }
 
+    public function configureActions(Actions $actions): Actions
+{
+    return $actions
+        // ...
+        ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ->setPermission(Action::NEW, 'ROLE_ADMIN')
+        ->setPermission(Action::DELETE, 'ROLE_ADMIN');
+}
     
     public function configureFields(string $pageName): iterable
     {
@@ -67,6 +78,9 @@ class CoachCrudController extends AbstractCrudController
             ])
             ->allowMultipleChoices()
             ->renderExpanded(),
+            TextField::new('fichesDePaieList', 'Fiches de paie')
+            ->onlyOnIndex()
+            ->renderAsHtml(),
             
         ];
     }

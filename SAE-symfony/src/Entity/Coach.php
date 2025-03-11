@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Controller\Admin\FicheDePaieCrudController;
 use App\Repository\CoachRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -155,4 +156,18 @@ class Coach extends Utilisateur
 
         return $this;
     }
+
+    public function getFichesDePaieList(): string
+{
+    return implode(', ', $this->ficheDePaies->map(fn($fiche) => 
+        sprintf(
+            '<a href="/admin?crudAction=detail&crudControllerFqcn=%s&entityId=%d">Fiche #%d</a>',
+            urlencode('App\Controller\Admin\FicheDePaieCrudController'),
+            $fiche->getId(),
+            $fiche->getId()
+        )
+    )->toArray());
+}
+
+
 }
