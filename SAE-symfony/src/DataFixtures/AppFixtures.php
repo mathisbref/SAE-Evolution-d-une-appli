@@ -42,6 +42,7 @@ class AppFixtures extends Fixture
         }
          */
 
+
         $coachs = [];
         for ($i = 0; $i < 5; $i++) {
             $coach = new Coach();
@@ -102,7 +103,7 @@ class AppFixtures extends Fixture
             }
 
             $seance->setTypeSeance($typeSeance);
-            $seance->setThemeSeance($faker->word);
+            $seance->setThemeSeance($faker->randomElement(['cardio','renforcement musculaire','stretching','pilates','yoga','boxe','crossfit',]));
             $seance->setNiveauSeance($faker->randomElement(['débutant', 'intermédiaire', 'avancé']));
             $seance->setStatut($faker->randomElement(['prévue', 'validée', 'annulée']));
 
@@ -134,6 +135,13 @@ class AppFixtures extends Fixture
 
             $manager->persist($fiche);
         }
+
+        $admin = new Utilisateur();
+        $admin->setEmail('admin@admin.fr');
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin'));
+        $admin->setRoles(["ROLE_USER","ROLE_ADMIN"]);
+
+        $manager->persist($admin);
 
         $manager->flush();
     }

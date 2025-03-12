@@ -21,7 +21,7 @@ class CoachRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = "
-            SELECT c.*, u.*
+            SELECT c.*, U.nom AS nom, U.prenom AS prenom, CONCAT(U.nom, ' ', U.prenom) AS nompre
             FROM Coach c, Seance s, Utilisateur u
             WHERE c.id = s.coach_id AND u.id = c.id
             GROUP BY c.id

@@ -86,7 +86,7 @@ class DashboardController extends AbstractDashboardController
 
         $tauxAbsenteisme = $tauxTot / count($sportifs);
         $coachLePlusProductif = $this->coachRepository->getCoachLePlusProductif();
-
+        $bestThemeSeance = $this->seanceRepository->getBestThemeSeance();
         // Classer les séances par popularité (nombre de sportifs inscrits)
         //$seancesPopulaires = $this->seanceRepository->getTop3Seances();
 
@@ -95,7 +95,8 @@ class DashboardController extends AbstractDashboardController
             'tauxOccupation' => $tauxOccupation,
             // 'tauxSeances' => $tauxSeances,
             'tauxAbsenteisme' => $tauxAbsenteisme,
-            'coachProductifs' => $coachLePlusProductif,
+            'coachsProd' => $coachLePlusProductif,
+            'bestThemeSeance' => $bestThemeSeance,
             // 'seancesPopulaires' => $seancesPopulaires,
         ]);
     }
