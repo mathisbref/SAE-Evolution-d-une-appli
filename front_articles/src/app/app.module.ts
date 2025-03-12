@@ -21,6 +21,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { RegisterComponent } from './register/register.component';
 import { PlanningComponent } from './planning/planning.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { MyPlanningComponent } from './my-planning/my-planning.component';
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     CoachListComponent,
     LoginComponent,
     RegisterComponent,
-    PlanningComponent
+    PlanningComponent,
+    MyPlanningComponent
   ],
   providers: [
     provideClientHydration(),
