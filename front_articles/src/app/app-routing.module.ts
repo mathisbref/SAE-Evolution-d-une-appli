@@ -23,7 +23,7 @@ const routes: Routes = [
 
   // Planning général accessible à tous
   { path: 'planning', component: PlanningComponent },
-  { path: 'my-planning', component: MyPlanningComponent },
+  { path: 'my-planning', component: MyPlanningComponent, canActivate: [isAuthenticated] },
 
   // Planning personnel uniquement accessible aux utilisateurs authentifiés
   { path: 'my-planning', component: PlanningComponent, canActivate: [isAuthenticated] },

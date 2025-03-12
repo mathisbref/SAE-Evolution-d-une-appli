@@ -1,5 +1,17 @@
-<div *ngIf="coach">
-    <h1>{{ coach.prenom }} {{ coach.nom }}</h1>
-    <img [src]="coach.image" class="img-fluid">
-    <p>{{ coach.email }}</p>
+<div class="card">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <img [src]="coach.image || '/assets/images/coach/coach5.jpg'" alt="Photo du Coach" class="profile-pic">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h1>{{ coach.nom }} {{ coach.prenom }}</h1>
+                <p class="email">{{ coach.email }}</p>
+                <h2>Spécialités</h2>
+                <ul>
+                    <li *ngFor="let specialite of coach.specialites">{{ specialite }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
