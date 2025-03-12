@@ -1,96 +1,92 @@
-// login.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { first } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup = new FormGroup({});
-  loading = false;
-  submitted = false;
+  loginForm!: FormGroup;
+  isSubmitting = false;
+  errorMessage = '';
+  successMessage = '';
+  showPassword = false;
   returnUrl: string = '/';
-  error: string = '';
-  hidePassword = true;
 
   constructor(
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
+    private authService: AuthService,
     private router: Router,
-    private authService: AuthService
-  ) {
-    // Redirect to home if already logged in
-    if (this.authService.currentUserValue) {
-      this.redirectBasedOnRole();
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    this.initForm();
+    
+    // Récupérer l'URL de retour des paramètres de requête ou utiliser la page d'accueil par défaut
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    
+    // Vérifier si l'utilisateur vient de s'inscrire
+    this.route.queryParams.subscribe(params => {
+      if (params['registered'] === 'success') {
+        this.successMessage = 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
+        // Si l'email est passé en paramètre, pré-remplir le champ email
+        if (params['email']) {
+          this.loginForm.patchValue({
+            email: params['email']
+          });
+        }
+      }
+    });
+    
+    // Rediriger si déjà connecté
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate([this.returnUrl]);
     }
   }
 
-  ngOnInit() {
+  initForm(): void {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      rememberMe: [false]
+      password: ['', [Validators.required]]
     });
-
-    // Get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  // Easy access to form fields
-  get f() { 
-    return this.loginForm.controls; 
-  }
-
-  onSubmit() {
-    this.submitted = true;
-
-    // Stop here if form is invalid
+  onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
 
-    this.loading = true;
-    this.authService.login(
-      this.f['email'].value,
-      this.f['password'].value,
-      this.f['rememberMe'].value
-    )
-    .pipe(first())
-    .subscribe(
-      data => {
-        this.redirectBasedOnRole();
+    this.isSubmitting = true;
+    this.errorMessage = '';
+
+    const email = this.loginForm.get('email')?.value;
+    const password = this.loginForm.get('password')?.value;
+
+    this.authService.login(email, password).subscribe({
+      next: (success) => {
+        if (success) {
+          this.router.navigate([this.returnUrl]);
+        } else {
+          this.isSubmitting = false;
+          this.errorMessage = "Échec de la connexion. Veuillez vérifier vos informations.";
+        }
       },
-      error => {
-        this.error = error.error?.message || 'Identifiants incorrects. Veuillez réessayer.';
-        this.loading = false;
+      error: (error) => {
+        this.isSubmitting = false;
+        if (error.error && error.error.message) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de la connexion. Veuillez réessayer.';
+        }
       }
-    );
+    });
   }
 
-  redirectBasedOnRole() {
-    const userRole = this.authService.getUserRole();
-    
-    switch(userRole) {
-      case 'ROLE_SPORTIF':
-        this.router.navigate(['/sportif/dashboard']);
-        break;
-      case 'ROLE_COACH':
-        this.router.navigate(['/coach/dashboard']);
-        break;
-      case 'ROLE_RESPONSABLE':
-        this.router.navigate(['/admin/dashboard']);
-        break;
-      default:
-        this.router.navigate(['/']);
-    }
-  }
-
-  togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }
