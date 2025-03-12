@@ -3,41 +3,55 @@
 {% block content %}
 <div class="dashboard-container">
 
-    <h1>Dashboard</h1>
+    <h1 class="dashboard-title">Tableau de Bord</h1>
 
     <!-- 📊 Statistiques en ligne -->
-    <div class="stats-line-container">
-        <div class="stats-line">
-            <span>Taux d'occupation</span>
-            <strong>{{ tauxOccupation|number_format(2) }}%</strong>
+    <div class="stats-grid">
+        <!-- Taux d'occupation -->
+        <div class="stat-card">
+            <div class="stat-content">
+                <span class="stat-label">Taux d'occupation</span>
+                <strong class="stat-value">{{ tauxOccupation|number_format(2) }}%</strong>
+            </div>
         </div>
-        <div class="stats-line">
-            <span>Taux d'absentéisme</span>
-            <strong>{{ tauxAbsenteisme|number_format(2) }}%</strong>
+
+        <!-- Taux d'absentéisme -->
+        <div class="stat-card">
+            <div class="stat-content">
+                <span class="stat-label">Taux d'absentéisme</span>
+                <strong class="stat-value">{{ tauxAbsenteisme|number_format(2) }}%</strong>
+            </div>
         </div>
-        <div class="stats-line">
-            <span>Coach(s) avec le plus de séances :</span>
-            <ul>
-                {% for coach in coachsProd %}
-                    <li>
+
+        <!-- Coach(s) avec le plus de séances -->
+        <div class="stat-card">
+            <div class="stat-content">
+                <span class="stat-label">Coach(s) avec le plus de séances</span>
+                <div class="coach-list">
+                    {% for coach in coachsProd %}
                         <a href="{{ path('admin', {
-                            'crudAction': 'index',
+                            'crudAction': 'detail',
                             'crudControllerFqcn': 'App\\Controller\\Admin\\CoachCrudController',
-                            'query': coach.nompre
-                        }) }}">
-                            {{ coach.nompre }}
+                            'entityId': coach.id
+                        }) }}" class="coach-link">
+                            {{ coach.nompre }} ({{ coach.nb_seances }} séances)
                         </a>
-                    </li>                
-                {% endfor %}
-            </ul>
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div class="stats-line">
-            <span>Thème préféré :</span>
-            <ul>
-                {% for theme in bestThemeSeance %}
-                    <li>{{ theme.theme_seance }} ({{ theme.nb_seances }} séances)</li>
-                {% endfor %}
-            </ul>
+
+        <!-- Thème préféré -->
+        <div class="stat-card">
+            <div class="stat-content">
+                <span class="stat-label">Thème préféré</span>
+                <ul class="theme-list">
+                    {% for theme in bestThemeSeance %}
+                        <li>{{ theme.theme_seance }} ({{ theme.nb_seances }} séances)</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -49,80 +63,76 @@
         max-width: 1200px;
         margin: auto;
         padding: 20px;
+        font-family: 'Arial', sans-serif;
     }
 
-    /* Statistiques en ligne */
-    .stats-line-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
+    .dashboard-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c3e50;
         margin-bottom: 30px;
-    }
-
-    .stats-line {
-        background: #4CAF50;
-        color: white;
-        border-radius: 8px;
-        padding: 20px;
-        flex: 1;
         text-align: center;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .stats-line span {
+    /* Grille de statistiques */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    /* Carte de statistique */
+    .stat-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-label {
         display: block;
         font-size: 16px;
-        margin-bottom: 10px;
+        color: #666;
+        margin-bottom: 5px;
     }
 
-    .stats-line strong {
+    .stat-value {
         font-size: 24px;
+        color: #2c3e50;
     }
 
-    .stats-line ul {
+    /* Liste des coachs */
+    .coach-list {
+        font-size: 16px;
+        color: #3498db;
+    }
+
+    .coach-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .coach-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Liste des thèmes */
+    .theme-list {
         list-style-type: none;
         padding: 0;
         margin: 0;
     }
 
-    .stats-line li {
+    .theme-list li {
         font-size: 16px;
-        margin: 5px 0;
-    }
-
-    /* Liste des séances populaires */
-    .seances-populaires {
-        margin-top: 20px;
-    }
-
-    .seance-card {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .seance-info {
-        font-size: 16px;
-    }
-
-    .seance-date {
-        font-weight: bold;
         color: #333;
-    }
-
-    .seance-coach {
-        font-style: italic;
-        color: #555;
-    }
-
-    .seance-participants {
-        font-weight: bold;
-        color: #4CAF50;
+        margin: 5px 0;
     }
 </style>
 
