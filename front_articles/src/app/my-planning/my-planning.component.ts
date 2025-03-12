@@ -5,6 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'; // Importez le plugin timeG
 import interactionPlugin from '@fullcalendar/interaction';
 import { SeanceService } from '../services/seance.service';
 import { CoachService } from '../services/coach.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -25,26 +26,38 @@ export class MyPlanningComponent implements OnInit {
   constructor(
     private seanceService: SeanceService,
     private coachService: CoachService,
+    private authService: AuthService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.coachService.getCoachs().subscribe(coachs => {
-      // Assigner des couleurs aux coachs
-      coachs.forEach((coach, index) => {
-        this.coachColors[coach.id] = this.getColor(index);
-      });
+    const currentUser = this.authService.currentAuthUserValue;
 
-      this.seanceService.getSeances().subscribe(data => {
-        this.calendarOptions.events = data.map(seance => ({
-          title: seance.theme_seance,
-          start: seance.date_heure,
-          id: seance.id,
-          backgroundColor: seance.statut === 'annulée' ? '#d3d3d3' : this.coachColors[seance.coach_id] || '#007bff', // Couleur de fond
-          borderColor: seance.statut === 'annulée' ? '#d3d3d3' : this.coachColors[seance.coach_id] || '#007bff' // Couleur de bordure
-        }));
+    if (currentUser && currentUser.id) {
+      this.coachService.getCoachs().subscribe(coachs => {
+        // Assigner des couleurs aux coachs
+        coachs.forEach((coach, index) => {
+          this.coachColors[coach.id] = this.getColor(index);
+        });
+
+        this.seanceService.getSeances().subscribe(data => {
+          console.log('All Seances:', data); // Ajoutez ce log pour vérifier les données
+          const userSeances = data.filter(seance =>
+            seance.sportifs.includes(`/api/sportifs/${currentUser.id}`)
+          );
+          console.log('User Seances:', userSeances); // Ajoutez ce log pour vérifier les données filtrées
+          this.calendarOptions.events = userSeances.map(seance => ({
+            title: seance.theme_seance,
+            start: seance.date_heure,
+            id: seance.id,
+            backgroundColor: seance.statut === 'annulée' ? '#d3d3d3' : this.coachColors[seance.coach_id] || '#007bff', // Couleur de fond
+            borderColor: seance.statut === 'annulée' ? '#d3d3d3' : this.coachColors[seance.coach_id] || '#007bff' // Couleur de bordure
+          }));
+        });
       });
-    });
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
   handleEventClick(arg: any) {
