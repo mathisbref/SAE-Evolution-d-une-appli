@@ -1,112 +1,161 @@
-// auth.service.ts
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { User } from '../models/user';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+
+export class AuthUser {
+  constructor(
+    public email: string = "",
+    public roles: string[] = []
+  ) {}
+
+  isAdmin(): boolean {
+    return this.roles.includes("ROLE_ADMIN");
+  }
+
+  isCoach(): boolean {
+    return this.roles.includes("ROLE_COACH");
+  }
+
+  isSportif(): boolean {
+    return this.roles.includes("ROLE_SPORTIF");
+  }
+
+  isLogged(): boolean {
+    return this.email.length > 0;
+  }
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://127.0.0.1:8008/api';
+  private apiUrlLogin = `${this.apiUrl}/login_check`;
+  private apiUrlUserInfo = `${this.apiUrl}/user/me`;
+
+  private localStorageToken = 'auth_token';
+  private localStorageUser = 'current_user';
+  
   private isBrowser: boolean;
+  
+  private currentTokenSubject: BehaviorSubject<string | null>;
+  public currentToken: Observable<string | null>;
+  public get currentTokenValue(): string | null { return this.currentTokenSubject.value; }
+
+  private currentAuthUserSubject: BehaviorSubject<AuthUser>;
+  public currentAuthUser: Observable<AuthUser>;
+  public get currentAuthUserValue(): AuthUser { return this.currentAuthUserSubject.value; }
 
   constructor(
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object
+    private http: HttpClient, 
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-    let userData: User | null = null;
-    
-    // Vérifier si nous sommes dans un navigateur avant d'accéder à localStorage/sessionStorage
+    this.isBrowser = isPlatformBrowser(platformId);
+    this.currentTokenSubject = new BehaviorSubject<string | null>(null);
+    this.currentToken = this.currentTokenSubject.asObservable();
+    this.currentAuthUserSubject = new BehaviorSubject(new AuthUser());
+    this.currentAuthUser = this.currentAuthUserSubject.asObservable();
+
     if (this.isBrowser) {
-      userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      const storedToken: string | null = localStorage.getItem(this.localStorageToken);
+      this.updateUserInfo(storedToken);
     }
-    
-    this.currentUserSubject = new BehaviorSubject<User | null>(userData);
-    this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
-  }
+  private updateUserInfo(token: string | null) {
+    this.currentTokenSubject.next(null);
+    this.currentAuthUserSubject.next(new AuthUser());
 
-  login(email: string, password: string, rememberMe: boolean): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { email, password })
-      .pipe(map(response => {
-        // Store user details and jwt token in local storage to keep user logged in
-        const user = {
-          id: response.id,
-          email: email,
-          token: response.token,
-          role: response.role,
-          prenom: response.prenom,
-          nom: response.nom
-        };
-        
-        if (this.isBrowser) {
-          if (rememberMe) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-          } else {
-            sessionStorage.setItem('currentUser', JSON.stringify(user));
+    if (token && this.isBrowser) {
+      const headers = new HttpHeaders({ 
+        'Authorization': `Bearer ${token}`, 
+        'skip-token': 'true' 
+      });
+      
+      this.http.get<any>(this.apiUrlUserInfo, { headers }).subscribe({
+        next: data => {
+          if (data.email) {
+            this.currentTokenSubject.next(token);
+            this.currentAuthUserSubject.next(new AuthUser(data.email, data.roles));
+            localStorage.setItem(this.localStorageToken, token);
+            localStorage.setItem(this.localStorageUser, JSON.stringify(data));
+          }
+        },
+        error: () => {
+          // En cas d'erreur, on supprime le token
+          if (this.isBrowser) {
+            localStorage.removeItem(this.localStorageToken);
+            localStorage.removeItem(this.localStorageUser);
           }
         }
-        
-        this.currentUserSubject.next(user);
-        return user;
-      }));
-  }
-
-  logout() {
-    // Remove user from local storage and session storage
-    if (this.isBrowser) {
-      localStorage.removeItem('currentUser');
-      sessionStorage.removeItem('currentUser');
+      });
     }
-    this.currentUserSubject.next(null);
   }
 
-  register(user: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/utilisateurs`, user);
-  }
-
-  getUserRole(): string {
-    const user = this.currentUserValue;
-    return user ? user.role : '';
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.currentUserValue;
-  }
-
-  // Check if user has specific role
-  hasRole(role: string): boolean {
-    if (!this.currentUserValue) return false;
-    return this.currentUserValue.role === role;
-  }
-
-  // Refresh token if needed
-  refreshToken(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/refresh-token`, {
-      token: this.currentUserValue?.token
-    }).pipe(map(response => {
-      const user = {...this.currentUserValue, token: response.token} as User;
-      
-      if (this.isBrowser) {
-        if (localStorage.getItem('currentUser')) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        } else if (sessionStorage.getItem('currentUser')) {
-          sessionStorage.setItem('currentUser', JSON.stringify(user));
+  public login(email: string, password: string): Observable<boolean> {
+    return this.http.post<any>(this.apiUrlLogin, { username: email, password }).pipe(
+      map(response => {
+        if (response && response.token) {
+          this.updateUserInfo(response.token);
+          return true;
+        } else {
+          return false;
         }
-      }
-      
-      this.currentUserSubject.next(user);
-      return user;
-    }));
+      })
+    );
+  }
+
+  public register(userData: any): Observable<any> {
+    // Définissez explicitement les en-têtes pour s'assurer que Content-Type est application/json
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json');
+    
+    // Préparez les données utilisateur dans le format attendu par votre API
+    const userToRegister = {
+      nom: userData.nom,
+      prenom: userData.prenom,
+      email: userData.email,
+      password: userData.password,
+      roles: ['ROLE_SPORTIF'],  // Assurez-vous que c'est le format attendu par votre API
+      niveau_sportif: userData.niveau_sportif
+    };
+    
+    // Envoyez la requête avec les en-têtes appropriés
+    return this.http.post(`${this.apiUrl}/utilisateurs`, userToRegister, { headers });
+  }
+
+  public logout() {
+    this.currentTokenSubject.next(null);
+    this.currentAuthUserSubject.next(new AuthUser());
+    
+    if (this.isBrowser) {
+      localStorage.removeItem(this.localStorageToken);
+      localStorage.removeItem(this.localStorageUser);
+    }
+    
+    this.router.navigate(['/login']);
+  }
+
+  public getToken(): string | null {
+    if (!this.isBrowser) {
+      return null;
+    }
+    return localStorage.getItem(this.localStorageToken);
+  }
+
+  public isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  public getCurrentUser(): any {
+    if (!this.isBrowser) {
+      return null;
+    }
+    const user = localStorage.getItem(this.localStorageUser);
+    return user ? JSON.parse(user) : null;
   }
 }

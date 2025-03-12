@@ -25,7 +25,7 @@
     </div>
 </div>
 <div class="background-gray">
-    <app-search-bar [width]="'50%'" [height]="'100px'"
-        [placeholder]="'Rechercher des séances disponibles'"></app-search-bar>
+    <app-search-bar [width]="'50%'" [height]="'100px'" [placeholder]="'Rechercher des séances disponibles'"
+        (search)="onSearch($event)"></app-search-bar>
     <app-coach-list></app-coach-list>
 </div>

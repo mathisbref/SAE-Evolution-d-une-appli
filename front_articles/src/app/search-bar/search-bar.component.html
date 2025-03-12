@@ -1,10 +1,10 @@
 <div class="search-container" [ngStyle]="{'width': width, 'height': height}">
     <div class="search-box">
-        <p class="search-text">Rechercher des séances disponibles</p>
+        <p class="search-text">{{ placeholder }}</p>
         <div class="input-group">
-            <input type="text" class="form-control" [placeholder]="placeholder">
-            <button class="btn btn-primary search-btn" type="button">
-                <i class="fas fa-search"></i> <!-- Icône de loupe -->
+            <input type="text" class="form-control" [(ngModel)]="searchTerm" [placeholder]="placeholder">
+            <button class="btn btn-primary search-btn" type="button" (click)="onSearch()">
+                <i class="fas fa-search"></i>
             </button>
         </div>
     </div>
