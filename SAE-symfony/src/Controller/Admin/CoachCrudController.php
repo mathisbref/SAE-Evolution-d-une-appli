@@ -56,7 +56,8 @@ class CoachCrudController extends AbstractCrudController
         // ...
         ->add(Crud::PAGE_INDEX, Action::DETAIL)
         ->setPermission(Action::NEW, 'ROLE_ADMIN')
-        ->setPermission(Action::DELETE, 'ROLE_ADMIN');
+        ->setPermission(Action::DELETE, 'ROLE_ADMIN')
+        ->setPermission(Action::EDIT, 'ROLE_ADMIN');
 }
     
     public function configureFields(string $pageName): iterable

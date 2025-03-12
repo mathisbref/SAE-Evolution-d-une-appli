@@ -54,7 +54,9 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-folder', Utilisateur::class);
+        }
         yield MenuItem::linkToCrud ('Coachs', 'fa fa-folder', Coach::class);
         yield MenuItem::linkToCrud ('Sportifs', 'fa fa-folder', Sportif::class);
         
