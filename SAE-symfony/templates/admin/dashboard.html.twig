@@ -1,11 +1,316 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block content %}
-    <div class="content-header">
-        <h1>Tableau de bord</h1>
+<div class="dashboard-container">
+
+    {% if is_granted('ROLE_ADMIN') %}
+    <h1 class="dashboard-title">Tableau de Bord</h1>
+    <!-- 📊 Statistiques en ligne -->
+    <div class="stats-grid">
+        <!-- Taux d'occupation et Taux d'absentéisme -->
+        <div class="stat-section">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Taux d'occupation</span>
+                    <strong class="stat-value">{{ tauxOccupation|number_format(2) }}%</strong>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Taux d'absentéisme</span>
+                    <strong class="stat-value">{{ tauxAbsenteisme|number_format(2) }}%</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagrammes en barres pour la moyenne par coach et par horaire -->
+        <div class="stat-section stat-section-graphs">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Moyenne de sportifs par coach</span>
+                    <canvas id="coachAvgChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Moyenne de sportifs par créneau</span>
+                    <canvas id="horaireAvgChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partie Coach -->
+        <div class="stat-section">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Coach(s) avec le plus de séances</span>
+                    <div class="coach-list">
+                        {% for coach in coachsProd %}
+                            <a href="{{ path('admin', {
+                                'crudAction': 'detail',
+                                'crudControllerFqcn': 'App\\Controller\\Admin\\CoachCrudController',
+                                'entityId': coach.id
+                            }) }}" class="coach-link">
+                                {{ coach.nompre }} ({{ coach.nb_seances }} séances)
+                            </a>
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partie Séances -->
+        <div class="stat-section">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Thème préféré</span>
+                    <ul class="theme-list">
+                        {% for theme in bestThemeSeance %}
+                            <li>{{ theme.theme_seance }} ({{ theme.nb_seances }} séances)</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Temps moyen d'une séance </span>
+                    <ul class="theme-list">
+                            <li>{{ tempsMoyenSeance }} minutes</li>
+                    </ul>                        
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Thèmes par nombre de séances prévues ou validées</span>
+                    <table class="theme-table">
+                        <thead>
+                            <tr>
+                                <th>Thème</th>
+                                <th>Nombre de séances</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for theme in statsThemeSeance %}
+                                <tr>
+                                    <td>{{ theme.theme_seance }}</td>
+                                    <td>{{ theme.nb_seances }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <span class="stat-label">Types de séance par nombre de séances prévues ou validées</span>
+                    <table class="theme-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Nombre de séances</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for type in statsTypeSeance %}
+                                <tr>
+                                    <td>{{ type.type_seance }}</td>
+                                    <td>{{ type.nb_seances }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+    {% endif %}
 
+    {% if is_granted('ROLE_COACH') %}
+        <h1 class="dashboard-title">Bienvenue sur votre plateforme de gestion !</h1>
+    {% endif %}
+
+</div>
+
+<style>
+    /* Conteneur principal */
+    .dashboard-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .dashboard-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    /* Grille de statistiques */
+    .stats-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* Section de statistiques */
+    .stat-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    /* Section de statistiques pour les graphiques */
+    .stat-section-graphs {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Carte de statistique */
+    .stat-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        color: #2c3e50;
+    }
+
+    /* Liste des coachs */
+    .coach-list {
+        font-size: 16px;
+        color: #3498db;
+    }
+
+    .coach-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .coach-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Liste des thèmes */
+    .theme-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .theme-list li {
+        font-size: 16px;
+        color: #333;
+        margin: 5px 0;
+        text-align: right;
+    }
+
+    .theme-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
     
+    .theme-table th,
+    .theme-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        color: #0a0a0a;
+    }
+    
+    .theme-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .theme-table tbody tr {
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .theme-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    .theme-table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .theme-table td:nth-child(2) {
+        font-weight: bold;
+        color: #4CAF50; /* Couleur verte pour les nombres */
+    }
+</style>
 
-    <!-- Votre contenu personnalisé ici -->
+<!-- Inclure Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var coachCtx = document.getElementById('coachAvgChart').getContext('2d');
+        var coachAvgChart = new Chart(coachCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for coach in tauxFreqCoachs %}'{{ coach.nom }} {{ coach.prenom }}',{% endfor %}],
+                datasets: [{
+                    label: 'Moyenne de personnes par coach',
+                    data: [{% for coach in tauxFreqCoachs %}{{ coach.moyenne_freq }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        var horaireCtx = document.getElementById('horaireAvgChart').getContext('2d');
+        var horaireAvgChart = new Chart(horaireCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for creneau in tauxFreqHoraires %}'{{ creneau.creneau_horaire }}',{% endfor %}],
+                datasets: [{
+                    label: 'Moyenne de personnes par créneau',
+                    data: [{% for creneau in tauxFreqHoraires %}{{ creneau.moyenne_freq }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+
 {% endblock %}

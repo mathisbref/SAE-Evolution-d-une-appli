@@ -8,6 +8,9 @@ use App\Entity\FicheDePaie;
 use App\Entity\Seance;
 use App\Entity\Sportif;
 use App\Entity\Utilisateur;
+use App\Repository\SeanceRepository;
+use App\Repository\SportifRepository;
+use App\Repository\CoachRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -18,31 +21,98 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    private $seanceRepository;
+    private $sportifRepository;
+    private $coachRepository;
+
+    public function __construct(SeanceRepository $seanceRepository, SportifRepository $sportifRepository, CoachRepository $coachRepository)
+    {
+        $this->seanceRepository = $seanceRepository;
+        $this->sportifRepository = $sportifRepository;
+        $this->coachRepository = $coachRepository;
+    }
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
+        // Récupérer toutes les séances
+        $seances = $this->seanceRepository->findAll();
+
+        // Tableau pour stocker les taux d'occupation de chaque séance
+        $tauxSeances = [];
+
+        foreach ($seances as $seance) {
+            // Déterminer la capacité maximale en fonction du type de séance
+            $capaciteMax = match ($seance->getTypeSeance()) {
+                'solo' => 1,
+                'duo' => 2,
+                'trio' => 3,
+                default => 0,
+            };
+
+            // Récupérer le nombre d'inscrits pour la séance
+            $nombreInscrits = $seance->getSportifs()->count();
+
+            // Calculer le taux d'occupation pour cette séance
+            $taux = ($capaciteMax > 0) ? ($nombreInscrits / $capaciteMax) * 100 : 0;
+
+            // Stocker le taux d'occupation dans le tableau
+            $tauxSeances[] = $taux;
+        }
+
+        // Calculer la moyenne des taux d'occupation
+        $tauxOccupationMoyen = (count($tauxSeances) > 0) ? array_sum($tauxSeances) / count($tauxSeances) : 0;
+
+        // Arrondir le taux d'occupation moyen à 2 décimales
+        $tauxOccupation = round($tauxOccupationMoyen, 2);
+
         
+        // Récupérer tous les sportifs
+        $sportifs = $this->sportifRepository->findAll();
 
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
-        // 1.1) If you have enabled the "pretty URLs" feature:
-        // return $this->redirectToRoute('admin_user_index');
-        //
-        // 1.2) Same example but using the "ugly URLs" that were used in previous EasyAdmin versions:
-        // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        // return $this->redirect($adminUrlGenerator->setController(OneOfYourCrudController::class)->generateUrl());
+        // Calculer le taux d'absentéisme pour chaque sportif
+        $tauxTot = 0;
+        foreach ($sportifs as $sportif) {
+            $seancesInscrites = $sportif->getSeances()->count();
+            $seancesAnnulees = $sportif->getSeances()->filter(function ($seance) {
+                return $seance->getStatut() === 'annulée';
+            })->count();
 
-        // Option 2. You can make your dashboard redirect to different pages depending on the user
-        //
-        // if ('jane' === $this->getUser()->getUsername()) {
-        //     return $this->redirectToRoute('...');
-        // }
+            $taux = ($seancesInscrites > 0) ? ($seancesAnnulees / $seancesInscrites) * 100 : 0;
+            $tauxTot = $tauxTot + round($taux, 2);
+        }
 
-        // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
-        // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
-        //
-        return $this->render('admin/dashboard.html.twig');
+        $tauxAbsenteisme = $tauxTot / count($sportifs);
+
+        $tempsSeances = $this->seanceRepository->getTempsSeance();
+        $tauxTot = 0;
+        foreach ($tempsSeances as $seance) {
+            $tauxTot = $tauxTot + $seance['temps_seance'];
+        }
+        $tempsMoyenSeance = $tauxTot / count($tempsSeances);
+        $tempsMoyenSeance = round($tempsMoyenSeance, 0);
+        $coachLePlusProductif = $this->coachRepository->getCoachLePlusProductif();
+        $bestThemeSeance = $this->seanceRepository->getBestThemeSeance();
+        $statsThemeSeance = $this->seanceRepository->getStatsThemeSeance();
+        $statsTypeSeance = $this->seanceRepository->getStatsTypeSeance();
+        $tauxFreqCoachs = $this->coachRepository->getMoyenneFreqCoach();
+        $tauxFreqHoraires = $this->seanceRepository->getFreqHoraires();
+
+
+        // Passer les données à la vue
+        return $this->render('admin/dashboard.html.twig', [
+            'tauxOccupation' => $tauxOccupation,
+            'tauxAbsenteisme' => $tauxAbsenteisme,
+            'coachsProd' => $coachLePlusProductif,
+            'bestThemeSeance' => $bestThemeSeance,
+            'statsThemeSeance' => $statsThemeSeance,
+            'statsTypeSeance' => $statsTypeSeance,
+            'tempsMoyenSeance' => $tempsMoyenSeance,
+            'tauxFreqCoachs' => $tauxFreqCoachs,
+            'tauxFreqHoraires' => $tauxFreqHoraires,
+        ]);
     }
+
 
     public function configureDashboard(): Dashboard
     {

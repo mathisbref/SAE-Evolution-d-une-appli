@@ -14,6 +14,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+
 
 class AdminAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -35,7 +37,7 @@ class AdminAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
             new UserBadge($email),
             new PasswordCredentials($request->getPayload()->getString('password')),
             [
-                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),            ]
+                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')), ]
         );
     }
 
@@ -49,11 +51,11 @@ class AdminAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
         // return new RedirectResponse($this->urlGenerator->generate('some_route'));
         if (in_array('ROLE_ADMIN', $token->getUser()->getRoles())) {
             return new RedirectResponse("/admin");
-        }elseif (in_array('ROLE_USER', $token->getUser()->getRoles())) {
+        }elseif (in_array('ROLE_COACH', $token->getUser()->getRoles())) {
             return new RedirectResponse("/admin");
         }
          else {
-            return new RedirectResponse("/");
+            return new RedirectResponse("/login");
         }
     }
 
