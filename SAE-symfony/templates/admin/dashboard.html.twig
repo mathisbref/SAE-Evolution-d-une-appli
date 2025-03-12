@@ -3,8 +3,8 @@
 {% block content %}
 <div class="dashboard-container">
 
+    {% if is_granted('ROLE_ADMIN') %}
     <h1 class="dashboard-title">Tableau de Bord</h1>
-
     <!-- 📊 Statistiques en ligne -->
     <div class="stats-grid">
         <!-- Taux d'occupation et Taux d'absentéisme -->
@@ -124,6 +124,11 @@
             </div>
         </div>
     </div>
+    {% endif %}
+
+    {% if is_granted('ROLE_COACH') %}
+        <h1 class="dashboard-title">Bienvenue sur votre plateforme de gestion !</h1>
+    {% endif %}
 
 </div>
 
