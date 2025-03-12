@@ -42,6 +42,7 @@ class AppFixtures extends Fixture
         }
          */
 
+
         $coachs = [];
         for ($i = 0; $i < 5; $i++) {
             $coach = new Coach();
@@ -87,15 +88,28 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 200; $i++) {
             $seance = new Seance();
             $seance->setDateHeure($faker->dateTimeBetween('now', '+1 month'));
-            $seance->setTypeSeance($faker->randomElement(['solo', 'duo', 'trio']));
-            $seance->setThemeSeance($faker->word);
+
+            $nombreSportifs = $faker->numberBetween(0, 3);
+            if ($nombreSportifs === 0) {
+                $typeSeance = $faker->randomElement(['solo', 'duo', 'trio']);
+            } elseif ($nombreSportifs === 1) {
+                $typeSeance = 'solo';
+            } elseif ($nombreSportifs === 2) {
+                $typeSeance = 'duo';
+            } elseif ($nombreSportifs === 3) {
+                $typeSeance = 'trio';
+            } else {
+                $typeSeance = 'trio';
+            }
+
+            $seance->setTypeSeance($typeSeance);
+            $seance->setThemeSeance($faker->randomElement(['cardio','renforcement musculaire','stretching','pilates','yoga','boxe','crossfit',]));
             $seance->setNiveauSeance($faker->randomElement(['débutant', 'intermédiaire', 'avancé']));
             $seance->setStatut($faker->randomElement(['prévue', 'validée', 'annulée']));
 
             $coach = $coachs[$faker->numberBetween(0, 4)];
             $seance->setCoach($coach);
 
-            $nombreSportifs = $faker->numberBetween(1, 3);
             for ($j = 0; $j < $nombreSportifs; $j++) {
                 $sportif = $sportifs[$faker->numberBetween(0, 9)];
                 $seance->addSportif($sportif);
@@ -121,6 +135,13 @@ class AppFixtures extends Fixture
 
             $manager->persist($fiche);
         }
+
+        $admin = new Utilisateur();
+        $admin->setEmail('admin@admin.fr');
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin'));
+        $admin->setRoles(["ROLE_USER","ROLE_ADMIN"]);
+
+        $manager->persist($admin);
 
         $manager->flush();
     }
