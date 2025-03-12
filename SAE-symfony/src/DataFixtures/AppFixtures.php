@@ -1,6 +1,5 @@
 <?php
 
-// src/DataFixtures/AppFixtures.php
 namespace App\DataFixtures;
 
 use App\Entity\Utilisateur;
@@ -27,22 +26,6 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-        /** 
-        $utilisateurs = [];
-        for ($i = 0; $i < 10; $i++) {
-            $utilisateur = new Utilisateur();
-            $utilisateur->setEmail($faker->unique()->email);
-            $utilisateur->setNom($faker->lastName);
-            $utilisateur->setPrenom($faker->firstName);
-            $utilisateur->setPassword($this->passwordHasher->hashPassword($utilisateur, 'password'));
-            $utilisateur->setRoles(['ROLE_USER']);
-
-            $manager->persist($utilisateur);
-            $utilisateurs[] = $utilisateur;
-        }
-         */
-
-
         $coachs = [];
         for ($i = 0; $i < 5; $i++) {
             $coach = new Coach();
@@ -51,7 +34,7 @@ class AppFixtures extends Fixture
             $coach->setPrenom($faker->firstName);
             $coach->setPassword($this->passwordHasher->hashPassword($coach, 'password'));
             $coach->setRoles(['ROLE_COACH']);
-            $coach->setSpecialites([$faker->word, $faker->word]);
+            $coach->setSpecialites($faker->randomElements(['cardio','renforcement musculaire','stretching','pilates','yoga','boxe','crossfit'], $faker->numberBetween(2, 4)));
             $coach->setTarifHoraire($faker->randomFloat(2, 20, 100));
 
             $manager->persist($coach);
@@ -103,7 +86,7 @@ class AppFixtures extends Fixture
             }
 
             $seance->setTypeSeance($typeSeance);
-            $seance->setThemeSeance($faker->randomElement(['cardio','renforcement musculaire','stretching','pilates','yoga','boxe','crossfit',]));
+            $seance->setThemeSeance($faker->randomElement(['cardio','renforcement musculaire','stretching','pilates','yoga','boxe','crossfit']));
             $seance->setNiveauSeance($faker->randomElement(['débutant', 'intermédiaire', 'avancé']));
             $seance->setStatut($faker->randomElement(['prévue', 'validée', 'annulée']));
 
@@ -142,6 +125,17 @@ class AppFixtures extends Fixture
         $admin->setRoles(["ROLE_USER","ROLE_ADMIN"]);
 
         $manager->persist($admin);
+
+        $coach = new Coach();
+        $coach->setEmail("coach@coach.fr");
+        $coach->setNom("Test");
+        $coach->setPrenom("Coach");
+        $coach->setPassword($this->passwordHasher->hashPassword($coach, 'coach'));
+        $coach->setRoles(['ROLE_COACH']);
+        $coach->setSpecialites($faker->randomElements(['cardio','renforcement musculaire','stretching','pilates','yoga','boxe','crossfit'], $faker->numberBetween(2, 4)));
+        $coach->setTarifHoraire($faker->randomFloat(2, 20, 100));
+
+        $manager->persist($coach);
 
         $manager->flush();
     }
