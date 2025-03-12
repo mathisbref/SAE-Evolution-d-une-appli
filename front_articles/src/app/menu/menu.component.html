@@ -10,32 +10,45 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Home
+                    <a class="nav-link active" routerLink="/">Home
                         <span class="visually-hidden">(current)</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/seances">Activities</a>
+                    <a class="nav-link" routerLink="/seances">Activities</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/planning">Planning</a>
+                    <a class="nav-link" routerLink="/planning">Planning</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">My Planning</a>
+                <!-- Liens visibles uniquement aux utilisateurs connectés -->
+                <li class="nav-item" *ngIf="isLoggedIn">
+                    <a class="nav-link" routerLink="/my-planning">My Planning</a>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" *ngIf="isLoggedIn">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                        aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        aria-haspopup="true" aria-expanded="false">Mon compte</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="#">Profil</a>
+                        <a class="dropdown-item" href="#">Mes réservations</a>
+                        <a class="dropdown-item" routerLink="/planning">Mon planning</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Separated link</a>
+                        <a class="dropdown-item" href="#" (click)="logout($event)">Déconnexion</a>
                     </div>
                 </li>
             </ul>
-            <a class="btn btn-outline-light ms-auto" type="button" routerLink="/login">Sign In</a>
+            <!-- Bouton de connexion (visible uniquement si non connecté) -->
+            <a *ngIf="!isLoggedIn" class="btn btn-outline-light ms-auto" type="button" routerLink="/login">Sign In</a>
+            
+            <!-- Info utilisateur (visible uniquement si connecté) -->
+            <div *ngIf="isLoggedIn" class="d-flex align-items-center">
+                <span class="text-light me-3">Bonjour, {{ userName }}</span>
+                <span *ngIf="isAdmin" class="badge bg-danger me-2">Admin</span>
+                <span *ngIf="isCoach" class="badge bg-warning me-2">Coach</span>
+                <span *ngIf="isSportif" class="badge bg-info me-2">Sportif</span>
+                <button class="btn btn-outline-light btn-sm" (click)="logout($event)">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </button>
+            </div>
         </div>
     </div>
 </nav>
