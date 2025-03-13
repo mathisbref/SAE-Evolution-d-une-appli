@@ -56,12 +56,12 @@ public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityD
 
     $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-    // Si l'utilisateur est un admin, il voit toutes les séances
+    
     if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
         return $queryBuilder;
     }
 
-    // Si l'utilisateur est un coach, il ne voit que ses propres séances
+    
     return $queryBuilder
         ->andWhere('entity.coach = :coachId')
         ->setParameter('coachId', $user->getId());
@@ -106,17 +106,17 @@ public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityD
                     'Annulée' => 'annulée',
                 ]),
                 $isAdmin
-                    ? AssociationField::new('coach') // Admin peut modifier
+                    ? AssociationField::new('coach') 
                     : AssociationField::new('coach')->setDisabled(true)->setFormTypeOption('data', $user),
                 AssociationField::new('exercices')
             ->setFormTypeOptions([
-                'by_reference' => false, // Important pour ManyToMany
+                'by_reference' => false,
                 'multiple' => true,
             ])
             ->setRequired(false),
             AssociationField::new('sportifs')
                 ->setFormTypeOptions([
-                    'by_reference' => false, // Important pour ManyToMany
+                    'by_reference' => false, 
                     'multiple' => true,
                     'attr' => [
                         'data-widget' => 'select2',
