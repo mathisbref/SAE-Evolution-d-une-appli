@@ -64,11 +64,9 @@ export class AuthService {
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    // Initialiser avec des valeurs par défaut
     this.currentTokenSubject = new BehaviorSubject<string | null>(null);
     this.currentAuthUserSubject = new BehaviorSubject(new AuthUser());
 
-    // Charger depuis localStorage uniquement côté navigateur
     if (this.isBrowser) {
       const storedToken = localStorage.getItem(this.localStorageToken);
       this.currentTokenSubject.next(storedToken);
@@ -85,35 +83,29 @@ export class AuthService {
   }
 
   public login(email: string, password: string): Observable<boolean> {
-    // D'abord, essayer avec les utilisateurs mock
-    const mockUser = this.mockUsers.find(u => u.email === email && u.password === password);
-
-    if (mockUser) {
-      this.setUserSession(mockUser);
-      return of(true);
-    }
-
-    // Si pas trouvé dans les mocks, récupérer les utilisateurs de l'API
     return this.http.get<any>(`${this.apiUrl}/utilisateurs`).pipe(
       map(response => {
-        // Supposons que la réponse contient un tableau d'utilisateurs
         const users = response.member || response;
-
-        // Chercher l'utilisateur correspondant
         const user = users.find((u: any) => u.email === email);
-
-        // ATTENTION: Cette vérification du mot de passe n'est pas sécurisée
-        // car normalement les mots de passe ne sont pas renvoyés en clair
-        // C'est une solution temporaire pour le développement uniquement
+        
         if (user) {
           this.setUserSession(user);
           return true;
         }
-
+        
         return false;
       }),
       catchError(error => {
         console.error('Erreur lors de la récupération des utilisateurs:', error);
+        
+        // Fallback sur les données mock en cas d'erreur
+        const mockUser = this.mockUsers.find(u => u.email === email && u.password === password);
+        
+        if (mockUser) {
+          this.setUserSession(mockUser);
+          return of(true);
+        }
+        
         return of(false);
       })
     );
@@ -169,18 +161,16 @@ export class AuthService {
   }
 
   public register(userData: any): Observable<any> {
-    // Définissez explicitement les en-têtes pour s'assurer que Content-Type est application/json
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 
-    // Préparez les données utilisateur dans le format attendu par votre API
     const userToRegister = {
       nom: userData.nom,
       prenom: userData.prenom,
       email: userData.email,
       password: userData.password,
-      roles: ['ROLE_SPORTIF'],  // Assurez-vous que c'est le format attendu par votre API
+      roles: ['ROLE_SPORTIF'], 
       niveau_sportif: userData.niveau_sportif
     };
 
@@ -199,7 +189,6 @@ export class AuthService {
           niveau_sportif: userData.niveau_sportif
         };
 
-        // On ajoute aussi l'utilisateur à notre liste locale de mocks
         this.mockUsers.push({
           id: userData.id,
           email: userData.email,

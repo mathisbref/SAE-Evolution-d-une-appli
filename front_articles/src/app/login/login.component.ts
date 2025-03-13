@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['registered'] === 'success') {
         this.successMessage = 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
-        // Si l'email est passé en paramètre, pré-remplir le champ email
         if (params['email']) {
           this.loginForm.patchValue({
             email: params['email']

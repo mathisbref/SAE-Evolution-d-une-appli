@@ -56,7 +56,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Se désabonner pour éviter les fuites de mémoire
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }

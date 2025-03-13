@@ -85,7 +85,6 @@ export class RegisterComponent implements OnInit {
     this.authService.register(userData).subscribe({
       next: (response) => {
         console.log('Inscription réussie:', response);
-        // Rediriger vers la page de connexion avec un message de succès
         this.router.navigate(['/login'], { 
           queryParams: { 
             registered: 'success',
