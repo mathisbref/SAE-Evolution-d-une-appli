@@ -76,7 +76,7 @@ public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityD
         return [
             IdField::new('id')->hideOnForm(),
             DateTimeField::new('date_heure')
-                ->setFormat('yyyy-MM-dd HH:mm:ss'),
+                ->setFormat('dd/MM/yyyy HH:mm'),
             ChoiceField::new('type_seance')
                 ->setChoices([
                     'Solo' => 'solo',

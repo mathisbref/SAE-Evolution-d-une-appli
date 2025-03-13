@@ -137,6 +137,17 @@ class AppFixtures extends Fixture
 
         $manager->persist($coach);
 
+        $sportif = new Sportif();
+        $sportif->setEmail('sportif@sportif.fr');
+        $sportif->setNom('Test');
+        $sportif->setPrenom('Sportif');
+        $sportif->setPassword($this->passwordHasher->hashPassword($sportif, 'sportif'));
+        $sportif->setRoles(['ROLE_SPORTIF']);
+        $sportif->setDateInscription($faker->dateTimeThisYear);
+        $sportif->setNiveauSportif($faker->randomElement(['débutant', 'intermédiaire', 'avancé']));
+
+        $manager->persist($sportif);
+
         $manager->flush();
     }
 }

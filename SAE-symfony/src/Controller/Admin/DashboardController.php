@@ -35,14 +35,13 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        // Récupérer toutes les séances
+        $sportifs = $this->sportifRepository->findAll();
         $seances = $this->seanceRepository->findAll();
 
-        // Tableau pour stocker les taux d'occupation de chaque séance
         $tauxSeances = [];
 
+        // CALCUL DU TAUX D'OCCUPATION MOYEN DES SEANCES
         foreach ($seances as $seance) {
-            // Déterminer la capacité maximale en fonction du type de séance
             $capaciteMax = match ($seance->getTypeSeance()) {
                 'solo' => 1,
                 'duo' => 2,
@@ -50,27 +49,18 @@ class DashboardController extends AbstractDashboardController
                 default => 0,
             };
 
-            // Récupérer le nombre d'inscrits pour la séance
             $nombreInscrits = $seance->getSportifs()->count();
 
-            // Calculer le taux d'occupation pour cette séance
             $taux = ($capaciteMax > 0) ? ($nombreInscrits / $capaciteMax) * 100 : 0;
 
-            // Stocker le taux d'occupation dans le tableau
             $tauxSeances[] = $taux;
         }
-
-        // Calculer la moyenne des taux d'occupation
         $tauxOccupationMoyen = (count($tauxSeances) > 0) ? array_sum($tauxSeances) / count($tauxSeances) : 0;
-
-        // Arrondir le taux d'occupation moyen à 2 décimales
         $tauxOccupation = round($tauxOccupationMoyen, 2);
 
         
-        // Récupérer tous les sportifs
-        $sportifs = $this->sportifRepository->findAll();
 
-        // Calculer le taux d'absentéisme pour chaque sportif
+        // CALCUL DU TAUX D'ABSENTEISME
         $tauxTot = 0;
         foreach ($sportifs as $sportif) {
             $seancesInscrites = $sportif->getSeances()->count();
@@ -84,6 +74,7 @@ class DashboardController extends AbstractDashboardController
 
         $tauxAbsenteisme = $tauxTot / count($sportifs);
 
+        // CALCUL DU TEMPS MOYEN D'UNE SEANCE
         $tempsSeances = $this->seanceRepository->getTempsSeance();
         $tauxTot = 0;
         foreach ($tempsSeances as $seance) {
@@ -91,6 +82,8 @@ class DashboardController extends AbstractDashboardController
         }
         $tempsMoyenSeance = $tauxTot / count($tempsSeances);
         $tempsMoyenSeance = round($tempsMoyenSeance, 0);
+
+        // RECUPERATION DES AUTRES INFOS
         $coachLePlusProductif = $this->coachRepository->getCoachLePlusProductif();
         $bestThemeSeance = $this->seanceRepository->getBestThemeSeance();
         $statsThemeSeance = $this->seanceRepository->getStatsThemeSeance();
@@ -99,7 +92,6 @@ class DashboardController extends AbstractDashboardController
         $tauxFreqHoraires = $this->seanceRepository->getFreqHoraires();
 
 
-        // Passer les données à la vue
         return $this->render('admin/dashboard.html.twig', [
             'tauxOccupation' => $tauxOccupation,
             'tauxAbsenteisme' => $tauxAbsenteisme,
@@ -123,7 +115,6 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
         if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-folder', Utilisateur::class);
         }
