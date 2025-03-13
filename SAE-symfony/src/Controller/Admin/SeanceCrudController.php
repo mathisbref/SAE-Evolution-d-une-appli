@@ -70,6 +70,9 @@ public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityD
     
     public function configureFields(string $pageName): iterable
     {
+
+        $user = $this->tokenStorage->getToken()?->getUser();
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
         return [
             IdField::new('id')->hideOnForm(),
             DateTimeField::new('date_heure')
@@ -102,7 +105,9 @@ public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityD
                     'Validée' => 'validée',
                     'Annulée' => 'annulée',
                 ]),
-                AssociationField::new('coach'),
+                $isAdmin
+                    ? AssociationField::new('coach') // Admin peut modifier
+                    : AssociationField::new('coach')->setDisabled(true)->setFormTypeOption('data', $user),
                 AssociationField::new('exercices')
             ->setFormTypeOptions([
                 'by_reference' => false, // Important pour ManyToMany
